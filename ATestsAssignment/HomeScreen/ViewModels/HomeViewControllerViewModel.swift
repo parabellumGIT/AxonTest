@@ -19,23 +19,20 @@ final class HomeViewControllerViewModel: ViewModelProtocol {
     var onError: OnErrorOccuredAction?
     var isLoading: ((Bool) -> Void)?
     var onDidLoadUsers: (() -> ())?
+    var shouldShowLoadingCell: Bool = false
+     private var isFetchingInProgress = false
     
     private weak var coordinatorDelegate: HomeViewControllerViewModelCoordinatorDelegate?
     private var currentPage = 1
-    
     private var users: [UserModel] = []
-    
-    var shouldShowLoadingCell: Bool = false
-
     private let batchCount = 20
-
      //MAX pages cap
     private let pageCap = 30
     
     var numberOfRows: Int {
         return users.count
     }
-    
+
     func fetchNextPage() {
         if !isFetchingInProgress {
             currentPage += 1
@@ -55,8 +52,6 @@ final class HomeViewControllerViewModel: ViewModelProtocol {
     func selectUser(at row: Int) {
         coordinatorDelegate?.didSelect(user: users[row])
     }
-    
-    private var isFetchingInProgress = false
     
     private func fetchUsers(refreshing: Bool = false){
         isFetchingInProgress = true

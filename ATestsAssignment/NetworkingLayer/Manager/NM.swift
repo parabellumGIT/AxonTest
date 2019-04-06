@@ -7,25 +7,10 @@
 //
 
 import Foundation
-import SystemConfiguration
-
-public enum Result<Value> {
-    case success(Value)
-    case failure(Error)
-    
-    init(success x: Value) {
-        self = .success(x)
-    }
-    
-    init(failure: Error) {
-        self = .failure(failure)
-    }
-}
 
 class NM {
-    
     static let shared = NM()
-    private let reachabilityManager = NetworkReachabilityManager.shared
+   
     
     private init() {
         NetworkReachabilityManager.isReachable { _ in
@@ -42,6 +27,8 @@ class NM {
             self.hasConnection = false
         }
     }
+    
+    private let reachabilityManager = NetworkReachabilityManager.shared
     
     private var hasConnection: Bool = false
     

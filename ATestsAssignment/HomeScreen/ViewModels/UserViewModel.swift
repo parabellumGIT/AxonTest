@@ -14,31 +14,42 @@ enum ImageType {
 
 struct UserViewModel {
     let fullName: String
-    var birthday: String?
-    let cellNumber: String?
-    let phoneNumber: String?
+    var cellNumber: String?
+    var phoneNumber: String?
     let imageUrl: URL
     let name: String
     let lastName: String
     let gender: String
+    let age: String
+    
+    private let birthdayDate: Date?
+    
+    var birthDay: String {
+        guard let date = birthdayDate else {
+            return "---"
+        }
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "YYYY-MM-dd"
+        return dateFormatter.string(from: date)
+    }
     
     init(from userModel: UserModel, imageType: ImageType) {
         fullName = "\(userModel.firstName) \(userModel.lastName)"
         name = userModel.firstName
         lastName = userModel.lastName
         gender = userModel.isMale ? "Male" : "Female"
-        let dateFormatter = DateFormatter()
-        let format = DateFormatter.dateFormat(fromTemplate: "MMMdd", options: 0, locale: Locale.current) ?? "MMM dd"
-        dateFormatter.dateFormat = format
-        if let date = userModel.birthdayDate {
-            birthday = dateFormatter.string(from: date)
-        }
+        age = String(userModel.age)
+        birthdayDate = userModel.birthdayDate
         switch imageType {
         case .large: imageUrl = URL(string: userModel.picture.large)!
         case .medium: imageUrl = URL(string: userModel.picture.medium)!
         case .thumb: imageUrl = URL(string: userModel.picture.thumbnail)!
         }
-        cellNumber = userModel.cell
-        phoneNumber = userModel.phone
+        if let cell = userModel.cell {
+             cellNumber = String.format(phoneNumber: cell)
+        }
+        if let phone = userModel.phone {
+             phoneNumber = String.format(phoneNumber: phone)
+        }
     }
 }

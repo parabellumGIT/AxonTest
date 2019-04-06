@@ -23,8 +23,8 @@ class UserTableViewCell: UITableViewCell {
 
     func configure(with vm: UserViewModel) {
         nameLabel.text = vm.fullName
-        birthdayLabel.text = "Birthday:"
-        birthdayDateLabel.text = vm.birthday ?? "--"
+        birthdayLabel.text = "Age:"
+        birthdayDateLabel.text = vm.age ?? "--"
         userImageView.setImage(from: vm.imageUrl, defaultImg: UIImage(named: "user"))
     }
 }

@@ -21,6 +21,7 @@ struct UserModel: Decodable {
     let phone: String?
     let cell: String?
     var birthdayDate: Date?
+    var age: Int
     let picture: Picture
     
     enum CodingKeys: String, CodingKey {
@@ -41,6 +42,7 @@ struct UserModel: Decodable {
         lastName = name["last"] ?? "--"
         let birthday = try container.decode(DateOfBirth.self, forKey: .birthdayObj)
         birthdayDate = dateFormatter.date(from: birthday.date)
+        age = birthday.age
         picture = try container.decode(Picture.self, forKey: .picture)
         let genderStr = try container.decode(String.self, forKey: .gender)
         isMale = genderStr == "male"

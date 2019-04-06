@@ -9,7 +9,7 @@
 import UIKit
 import Kingfisher
 
-class UserDetailsViewController: UIViewController, ControllerType {
+class UserDetailsViewController: UIViewController, ControllerType, ErrorRepresentable {
     
     @IBOutlet weak var genderLabel: UILabel!
     @IBOutlet weak var lastNameLabel: UILabel!
@@ -19,6 +19,7 @@ class UserDetailsViewController: UIViewController, ControllerType {
     @IBOutlet weak var phoneLabel: UILabel!
     @IBOutlet weak var cellStackView: UIStackView!
     @IBOutlet weak var phoneStackView: UIStackView!
+    @IBOutlet weak var birthdayLabel: UILabel!
     
     typealias ViewModelType = UserDetailsVCViewModel
     private var viewModel: ViewModelType!
@@ -34,6 +35,9 @@ class UserDetailsViewController: UIViewController, ControllerType {
     }
     
     func configure(with viewModel: UserDetailsVCViewModel) {
+        viewModel.onError = {[weak self] errorText in
+            self?.showError(text: errorText)
+        }
         userImageView.setImage(from: viewModel.userVM.imageUrl, defaultImg: UIImage(named: "user"))
         firstNameLabel.text = viewModel.userVM.name
         lastNameLabel.text = viewModel.userVM.lastName
@@ -41,8 +45,16 @@ class UserDetailsViewController: UIViewController, ControllerType {
         cellStackView.isHidden = viewModel.userVM.cellNumber == nil
         cellLabel.text = viewModel.userVM.cellNumber
         phoneLabel.text = viewModel.userVM.phoneNumber
+        birthdayLabel.text = viewModel.userVM.birthDay
     }
     
+    @IBAction func cellCallAction(_ sender: Any) {
+        viewModel.call(numberType: .cell)
+    }
+    
+    @IBAction func phoneCallAction(_ sender: Any) {
+        viewModel.call(numberType: .phone)
+    }
 }
 
 extension UserDetailsViewController {

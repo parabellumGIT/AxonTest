@@ -36,6 +36,7 @@
 		265959B22258C57F0035FD56 /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 265959B12258C57F0035FD56 /* NetworkError.swift */; };
 		265959B82258D12C0035FD56 /* UserDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 265959B72258D12C0035FD56 /* UserDetailsViewController.swift */; };
 		265959BA2258D1750035FD56 /* UserDetailsVCViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 265959B92258D1750035FD56 /* UserDetailsVCViewModel.swift */; };
+		265959BC2258EA650035FD56 /* String + MakeCall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 265959BB2258EA650035FD56 /* String + MakeCall.swift */; };
 		267372972258956400E9A3D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267372962258956400E9A3D9 /* AppDelegate.swift */; };
 		2673729C2258956400E9A3D9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2673729A2258956400E9A3D9 /* Main.storyboard */; };
 		2673729E2258956400E9A3D9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2673729D2258956400E9A3D9 /* Assets.xcassets */; };
@@ -73,6 +74,7 @@
 		265959B12258C57F0035FD56 /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
 		265959B72258D12C0035FD56 /* UserDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailsViewController.swift; sourceTree = "<group>"; };
 		265959B92258D1750035FD56 /* UserDetailsVCViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailsVCViewModel.swift; sourceTree = "<group>"; };
+		265959BB2258EA650035FD56 /* String + MakeCall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String + MakeCall.swift"; sourceTree = "<group>"; };
 		267372932258956400E9A3D9 /* ATestsAssignment.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ATestsAssignment.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		267372962258956400E9A3D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2673729B2258956400E9A3D9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -175,6 +177,7 @@
 			isa = PBXGroup;
 			children = (
 				265959882258AEFD0035FD56 /* UIImageView + Extensions.swift */,
+				265959BB2258EA650035FD56 /* String + MakeCall.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -440,6 +443,7 @@
 				265959AA2258B4540035FD56 /* RandomUserEndPoint.swift in Sources */,
 				265959B02258C4030035FD56 /* AlertRepresentable.swift in Sources */,
 				2659596B2258982C0035FD56 /* AppCoordinator.swift in Sources */,
+				265959BC2258EA650035FD56 /* String + MakeCall.swift in Sources */,
 				2659599E2258B4080035FD56 /* URLParameterEncoder.swift in Sources */,
 				2659599F2258B4080035FD56 /* JSONParameterEncoder.swift in Sources */,
 				265959A32258B4080035FD56 /* HTTPTask.swift in Sources */,

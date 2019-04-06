@@ -46,6 +46,7 @@ class UserDetailsViewController: UIViewController, ControllerType, ErrorRepresen
         cellLabel.text = viewModel.userVM.cellNumber
         phoneLabel.text = viewModel.userVM.phoneNumber
         birthdayLabel.text = viewModel.userVM.birthDay
+        genderLabel.text = viewModel.userVM.gender
     }
     
     @IBAction func cellCallAction(_ sender: Any) {

@@ -18,3 +18,16 @@ enum NetworkingError: Error {
     case noInternerConnection
     case apiIsUnreachable
 }
+
+extension NetworkingError: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .noData: return "No data in response"
+        case .badRequest: return "Bad request"
+        case .unableToDecode: return "Unable to decode response"
+        case .noInternerConnection: return "No internet connection"
+        case .apiIsUnreachable: return "API is unreachable"
+        default: return "Something went wrong"
+        }
+    }
+}

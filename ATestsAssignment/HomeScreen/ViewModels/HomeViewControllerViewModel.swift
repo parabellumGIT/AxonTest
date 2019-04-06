@@ -18,22 +18,38 @@ protocol HomeViewControllerViewModelCoordinatorDelegate: class {
 final class HomeViewControllerViewModel: ViewModelProtocol {
     var onError: OnErrorOccuredAction?
     var isLoading: ((Bool) -> Void)?
-    var onRefresh: (() -> ())?
+    var onDidLoadUsers: (() -> ())?
     
     private weak var coordinatorDelegate: HomeViewControllerViewModelCoordinatorDelegate?
-    private var page = 0
-    private var users: [UserModel] = [] {
-        didSet {
-            onRefresh?()
-        }
-    }
+    private var currentPage = 1
+    
+    private var users: [UserModel] = []
+    
+    var shouldShowLoadingCell: Bool = false
+
+    private let batchCount = 20
+
+     //MAX pages cap
+    private let pageCap = 30
     
     var numberOfRows: Int {
         return users.count
     }
     
+    func fetchNextPage() {
+        if !isFetchingInProgress {
+            currentPage += 1
+            fetchUsers()
+        }
+    }
+    
+    func didRefresh() {
+        currentPage = 1
+        fetchUsers(refreshing: true)
+    }
+    
     func userViewModel(for row: Int) -> UserViewModel {
-       return UserViewModel(from: users[row], imageType: .thumb)
+        return UserViewModel(from: users[row], imageType: .thumb)
     }
     
     func selectUser(at row: Int) {
@@ -42,10 +58,10 @@ final class HomeViewControllerViewModel: ViewModelProtocol {
     
     private var isFetchingInProgress = false
     
-    private func fetchUsers(){
+    private func fetchUsers(refreshing: Bool = false){
         isFetchingInProgress = true
         isLoading?(true)
-        NM.shared.getUsers(count: 20, page: page, seed: "axon") {[weak self] (result) in
+        NM.shared.getUsers(count: batchCount, page: currentPage, seed: "axon") {[weak self] (result) in
             guard let self = self else { return }
             self.isLoading?(false)
             self.isFetchingInProgress = false
@@ -53,8 +69,17 @@ final class HomeViewControllerViewModel: ViewModelProtocol {
             case .failure(let error):
                 self.onError?(error)
             case .success(let users):
-                self.page += 1
-                self.users = users
+                if refreshing {
+                    self.users = users
+                } else {
+                    for user in users {
+                        if !self.users.contains(user) {
+                            self.users.append(user)
+                        }
+                    }
+                }
+                self.shouldShowLoadingCell = self.currentPage < self.pageCap
+                self.onDidLoadUsers?()
             }
         }
     }
@@ -67,10 +92,10 @@ final class HomeViewControllerViewModel: ViewModelProtocol {
         let obj = notification.object as! Reachability
         switch obj.connection {
         case .none:
-           break
+            break
         case .cellular, .wifi:
             if !isFetchingInProgress {
-                fetchUsers()
+                fetchNextPage()
             }
         }
     }

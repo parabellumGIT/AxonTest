@@ -14,8 +14,9 @@ struct ResponseModel: Decodable {
     let error: String?
 }
 
-struct UserModel: Decodable {
+struct UserModel: Decodable{
     let firstName: String
+    let id: String
     let lastName: String
     let isMale: Bool
     let phone: String?
@@ -30,6 +31,7 @@ struct UserModel: Decodable {
         case picture = "picture"
         case gender = "gender"
         case phone = "phone"
+        case login = "login"
         case cell = "cell"
     }
     
@@ -48,8 +50,16 @@ struct UserModel: Decodable {
         isMale = genderStr == "male"
         phone = try container.decodeIfPresent(String.self, forKey: .phone)
         cell = try container.decodeIfPresent(String.self, forKey: .cell)
+        let login = try container.decode([String : String].self, forKey: .login)
+        id = login["uuid"]!
     }
     
+}
+
+extension UserModel: Equatable {
+    static func ==(lhs: UserModel, rhs: UserModel) -> Bool {
+        return lhs.id == rhs.id
+    }
 }
 
 struct Picture: Decodable {

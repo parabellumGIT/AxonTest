@@ -11,8 +11,6 @@ import UIKit
 class HomeViewController: UIViewController, ErrorRepresentable {
     
     @IBOutlet weak var tableView: UITableView!
-  
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     typealias ViewModelType = HomeViewControllerViewModel
     private var viewModel: ViewModelType!
@@ -20,20 +18,28 @@ class HomeViewController: UIViewController, ErrorRepresentable {
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.register(UINib(nibName: UserTableViewCell.reuseIdentifier, bundle: nil), forCellReuseIdentifier: UserTableViewCell.reuseIdentifier)
-        activityIndicator.startAnimating()
-        configureAppearance()
+        configureTableView()
         configure(with: viewModel)
         viewModel.onVCReady()
     }
     
-    
+    private func configureTableView() {
+        tableView.tableFooterView = UIView()
+        tableView.refreshControl = UIRefreshControl()
+        tableView.refreshControl?.addTarget(self, action: #selector(refresh), for: .valueChanged)
+        tableView.refreshControl?.beginRefreshing()
+        tableView.register(UINib(nibName: UserTableViewCell.reuseIdentifier, bundle: nil), forCellReuseIdentifier: UserTableViewCell.reuseIdentifier)
+        tableView.register(LoadingCell.self, forCellReuseIdentifier: LoadingCell.reuseIdentifier)
+    }
+
+    @objc
+    private func refresh() {
+        viewModel.didRefresh()
+    }
     
     func configure(with viewModel: HomeViewControllerViewModel) {
         viewModel.onError = {[weak self] error in
-            //TODO: - localized errors
-            //TODO: - retry?
-            self?.showError(title: "Oops", text: "Error", completion: nil)
+            self?.showError(title: "Oops", text: error.localizedDescription, completion: nil)
         }
         
         viewModel.isLoading = {[weak self] isLoading in
@@ -41,38 +47,52 @@ class HomeViewController: UIViewController, ErrorRepresentable {
             if isLoading {
                 self?.presentedViewController?.dismiss(animated: true, completion: nil)
             }
-            isLoading ? self?.activityIndicator.startAnimating() : self?.activityIndicator.stopAnimating()
+            UIApplication.shared.isNetworkActivityIndicatorVisible = isLoading
         }
         
-        viewModel.onRefresh = {[weak self] in
+        viewModel.onDidLoadUsers = {[weak self] in
+            self?.tableView.refreshControl?.endRefreshing()
             self?.tableView.reloadData()
         }
         
-    }
-    
-    private func configureAppearance() {
-        tableView.tableFooterView = UIView()
     }
     
 }
 
 extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-       return viewModel.numberOfRows
+        let count = viewModel.numberOfRows
+        return viewModel.shouldShowLoadingCell ? count + 1 : count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: UserTableViewCell.reuseIdentifier, for: indexPath) as! UserTableViewCell
-        let userVM = viewModel.userViewModel(for: indexPath.row)
-        cell.configure(with: userVM)
-        return cell
+        if isLoadingIndexPath(indexPath) {
+            let loadingCell = tableView.dequeueReusableCell(withIdentifier: LoadingCell.reuseIdentifier, for: indexPath)
+            return loadingCell
+        } else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: UserTableViewCell.reuseIdentifier, for: indexPath) as! UserTableViewCell
+            let userVM = viewModel.userViewModel(for: indexPath.row)
+            cell.configure(with: userVM)
+            return cell
+        }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        viewModel.selectUser(at: indexPath.row)
+        if !isLoadingIndexPath(indexPath){
+            viewModel.selectUser(at: indexPath.row)
+        }
     }
     
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        guard isLoadingIndexPath(indexPath) else { return }
+        viewModel.fetchNextPage()
+    }
+    
+    private func isLoadingIndexPath(_ indexPath: IndexPath) -> Bool {
+        guard viewModel.shouldShowLoadingCell else { return false }
+        return indexPath.row == viewModel.numberOfRows
+    }
 }
 
 extension HomeViewController: ControllerType {

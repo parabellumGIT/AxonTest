@@ -43,11 +43,7 @@ class NM {
         }
     }
     
-    private var hasConnection: Bool = false {
-        didSet {
-            
-        }
-    }
+    private var hasConnection: Bool = false
     
     private let router = Router<RandomUserEndPoint>()
     

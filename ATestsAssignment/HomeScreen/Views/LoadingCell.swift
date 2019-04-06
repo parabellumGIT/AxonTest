@@ -13,14 +13,19 @@ class LoadingCell : UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setupSubviews()
+        setup()
     }
+
     
     required init?(coder aDecoder: NSCoder) {
         fatalError()
     }
     
-    private func setupSubviews() {
+   func setup() {
+        guard activityIndicator == nil else {
+            activityIndicator.startAnimating()
+            return
+        }
         let indicator = UIActivityIndicatorView()
         indicator.translatesAutoresizingMaskIntoConstraints = false
         indicator.style = .gray
